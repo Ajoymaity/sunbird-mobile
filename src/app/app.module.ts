@@ -1,4 +1,4 @@
-import { ErrorHandler, NgModule } from '@angular/core';
+import {APP_INITIALIZER, ErrorHandler, NgModule, Provider} from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { Events, IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
 import { MyApp } from './app.component';
@@ -13,21 +13,91 @@ import { SocialSharing } from '@ionic-native/social-sharing';
 import { ImageLoader, ImageLoaderConfig, IonicImageLoader } from 'ionic-image-loader';
 import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer';
 import { FileOpener } from '@ionic-native/file-opener';
-import { AppGlobalService } from '../service/app-global.service';
-import { CourseUtilService } from '../service/course-util.service';
-import { UpgradePopover } from '../pages/upgrade/upgrade-popover';
-import { TelemetryGeneratorService } from '../service/telemetry-generator.service';
-import { QRScannerResultHandler } from '../pages/qrscanner/qrscanresulthandler.service';
-import { CommonUtilService } from '../service/common-util.service';
-import { BroadcastComponent } from '../component/broadcast/broadcast';
+import { AppGlobalService } from '@app/service';
+import { CourseUtilService } from '@app/service';
+import { UpgradePopover } from '@app/pages/upgrade';
+import { TelemetryGeneratorService } from '@app/service';
+import { QRScannerResultHandler } from '@app/pages/qrscanner';
+import { CommonUtilService } from '@app/service';
+import { BroadcastComponent } from '@app/component/broadcast/broadcast';
 import { LogoutHandlerService } from '@app/service/handlers/logout-handler.service';
 import { TncUpdateHandlerService } from '@app/service/handlers/tnc-update-handler.service';
 import { SunbirdSdk } from 'sunbird-sdk';
+import {UniqueDeviceID} from 'ionic-native';
 
-export const createTranslateLoader = (httpClient: HttpClient) => {
+export const translateHttpLoaderFactory = (httpClient: HttpClient) => {
   return new TranslateHttpLoader(httpClient, './assets/i18n/', '.json');
 };
 
+export class SunbirdSdkInjectionTokens {
+  public static readonly CONTENT_SERVICE = Symbol('CONTENT_SERVICE');
+  public static readonly COURSE_SERVICE = Symbol('COURSE_SERVICE');
+}
+
+export const sunbirdSdkServicesProvidersFactory: () => Provider[] = () => {
+  return [{
+    provide: SunbirdSdkInjectionTokens.CONTENT_SERVICE,
+    useValue: SunbirdSdk.instance.contentService
+  }, {
+    provide: SunbirdSdkInjectionTokens.COURSE_SERVICE,
+    useValue: SunbirdSdk.instance.courseService
+  }];
+};
+
+export const sunbirdSdkFactory: () => Promise<void> =
+  async () => {
+    const deviceId = await UniqueDeviceID.get();
+
+    SunbirdSdk.instance.init({
+      apiConfig: {
+        baseUrl: 'https://dev.sunbirded.org',
+        user_authentication: {
+          redirectUrl: 'org.sunbird.app.dev://mobile',
+          logoutUrl: '',
+          authUrl: ''
+        },
+        api_authentication: {
+          mobileAppKey: 'sunbird - 0.1',
+          mobileAppSecret: 'd0299ce55a6440eb968b46f355e22504',
+          mobileAppConsumer: 'mobile_device',
+          channelId: 'b00bc992ef25f1a9a8d63291e20efc8d',
+          producerId: 'dev.sunbird.app',
+          deviceId: deviceId
+        },
+        cached_requests: {
+          timeToLive: 2000
+        }
+      },
+      dbContext: {
+        getDBName: () => 'GenieServices.db',
+        getDBVersion: () => 16,
+        getAppMigrationList: () => []
+      },
+      contentServiceConfig: {
+        apiPath: ''
+      },
+      courseServiceConfig: {
+        apiPath: ''
+      },
+      formServiceConfig: {
+        apiPath: '',
+        formFilePath: ''
+      },
+      frameworkServiceConfig: {
+        apiPath: '',
+        frameworkConfigFilePaths: [],
+        channelConfigFilePath: ''
+      },
+      profileServiceConfig: {
+        apiPath: '',
+        searchProfilePath: ''
+      },
+      pageServiceConfig: {
+        apiPath: '',
+        filePath: ''
+      }
+    });
+  };
 
 @NgModule({
   declarations: [
@@ -43,7 +113,7 @@ export const createTranslateLoader = (httpClient: HttpClient) => {
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
-        useFactory: (createTranslateLoader),
+        useFactory: (translateHttpLoaderFactory),
         deps: [HttpClient]
       }
     }),
@@ -79,7 +149,9 @@ export const createTranslateLoader = (httpClient: HttpClient) => {
     CommonUtilService,
     LogoutHandlerService,
     TncUpdateHandlerService,
-    { provide: ErrorHandler, useClass: IonicErrorHandler }
+    ...sunbirdSdkServicesProvidersFactory(),
+    { provide: ErrorHandler, useClass: IonicErrorHandler },
+    {provide: APP_INITIALIZER, useFactory: sunbirdSdkFactory, deps: [UniqueDeviceID], multi: true}
   ],
   exports: [
     BroadcastComponent
@@ -88,70 +160,28 @@ export const createTranslateLoader = (httpClient: HttpClient) => {
 export class AppModule {
 
   constructor(
-    private device: Device,
     private translate: TranslateService,
     private eventService: EventService,
     private events: Events,
     private imageConfig: ImageLoaderConfig) {
 
-    translate.setDefaultLang('en');
+    this.setDefaultLanguage();
 
     this.registerForEvent();
-    this.imageConfig.enableDebugMode();
-    this.imageConfig.maxCacheSize = 2 * 1024 * 1024;
 
-    SunbirdSdk.instance.init({
-      apiConfig: {
-        baseUrl: 'https://dev.sunbirded.org',
-        user_authentication: {
-          redirectUrl: 'org.sunbird.app.dev://mobile',
-          logoutUrl: '',
-          authUrl: ''
-        },
-        api_authentication: {
-          mobileAppKey: 'sunbird - 0.1',
-          mobileAppSecret: 'd0299ce55a6440eb968b46f355e22504',
-          mobileAppConsumer: 'mobile_device',
-          channelId: 'b00bc992ef25f1a9a8d63291e20efc8d',
-          producerId: 'dev.sunbird.app',
-          deviceId: ''
-        },
-        cached_requests: {
-          timeToLive: 2000
-        }
-      },
-      dbContext: {
-        getDBName: () => 'GenieServices.db',
-        getDBVersion: () => 16,
-        getAppMigrationList(): []
-      },
-      contentServiceConfig: {
-        apiPath: 'SAME_URL'
-      },
-      courseServiceConfig: {
-        apiPath: 'SAME_URL'
-      },
-      formServiceConfig: {
-        apiPath: '',
-        formFilePath: ''
-      },
-      frameworkServiceConfig: {
-        apiPath: '',
-        frameworkConfigFilePaths: [],
-        channelConfigFilePath: ''
-      },
-      profileServiceConfig: {
-        apiPath: 'SAME_URL',
-        searchProfilePath: ''
-      },
-      pageServiceConfig: {
-        apiPath: '',
-        filePath: ''
-      }
-    });
+    this.configureImageLoader();
   }
 
-  registerForEvent() {
+  private configureImageLoader() {
+    this.imageConfig.enableDebugMode();
+    this.imageConfig.maxCacheSize = 2 * 1024 * 1024;
+  }
+
+  private setDefaultLanguage() {
+    this.translate.setDefaultLang('en');
+  }
+
+  private registerForEvent() {
     this.eventService.register((response) => {
       const res = JSON.parse(response);
       if (res && res.type === 'genericEvent') {
@@ -159,9 +189,7 @@ export class AppModule {
       } else {
         this.events.publish('genie.event', response);
       }
-
-    }, (error) => {
-      // console.log("Event : " + error);
+    }, () => {
     });
   }
 }
