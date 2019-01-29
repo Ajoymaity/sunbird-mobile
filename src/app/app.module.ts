@@ -23,7 +23,7 @@ import { BroadcastComponent } from '@app/component/broadcast/broadcast';
 import { LogoutHandlerService } from '@app/service/handlers/logout-handler.service';
 import { TncUpdateHandlerService } from '@app/service/handlers/tnc-update-handler.service';
 import { SunbirdSdk } from 'sunbird-sdk';
-import {UniqueDeviceID} from '@ionic-native/unique-device-id/ngx';
+import { UniqueDeviceID } from '@ionic-native/unique-device-id';
 
 export const translateHttpLoaderFactory = (httpClient: HttpClient) => {
   return new TranslateHttpLoader(httpClient, './assets/i18n/', '.json');
@@ -149,6 +149,7 @@ export const sunbirdSdkFactory: (uniqueDeviceID: UniqueDeviceID) => Promise<void
     CommonUtilService,
     LogoutHandlerService,
     TncUpdateHandlerService,
+    UniqueDeviceID,
     ...sunbirdSdkServicesProvidersFactory(),
     { provide: ErrorHandler, useClass: IonicErrorHandler },
     {provide: APP_INITIALIZER, useFactory: sunbirdSdkFactory, deps: [UniqueDeviceID], multi: true}
