@@ -29,9 +29,9 @@ export const translateHttpLoaderFactory = (httpClient: HttpClient) => {
   return new TranslateHttpLoader(httpClient, './assets/i18n/', '.json');
 };
 
-export class SunbirdSdkInjectionTokens {
-  public static readonly CONTENT_SERVICE = Symbol('CONTENT_SERVICE');
-  public static readonly COURSE_SERVICE = Symbol('COURSE_SERVICE');
+export namespace SunbirdSdkInjectionTokens {
+  export const CONTENT_SERVICE = 'CONTENT_SERVICE';
+  export const COURSE_SERVICE = 'COURSE_SERVICE';
 }
 
 export const sunbirdSdkServicesProvidersFactory: () => Provider[] = () => {
