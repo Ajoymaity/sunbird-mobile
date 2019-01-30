@@ -198,7 +198,6 @@ export class LanguageSettingsPage {
       this.generateLanguageSuccessInteractEvent(this.previousLanguage, this.language);
       if (this.language) {
         this.selectedLanguage = this.languages.find(i => i.code === this.language);
-        console.log(this.preferences);
         this.preferences.putString(PreferenceKey.SELECTED_LANGUAGE_CODE, this.selectedLanguage.code);
         this.preferences.putString(PreferenceKey.SELECTED_LANGUAGE, this.selectedLanguage.label);
         this.translateService.use(this.language);
