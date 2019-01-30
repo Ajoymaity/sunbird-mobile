@@ -1,5 +1,5 @@
 import { TranslateService } from '@ngx-translate/core';
-import { Component } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import {
   NavController,
   PopoverController,
@@ -8,7 +8,6 @@ import {
 import * as _ from 'lodash';
 import {
   ProfileService,
-  SharedPreferences,
   ProfileType,
   ImpressionType,
   PageId,
@@ -32,6 +31,7 @@ import {
   PreferenceKey,
   FrameworkCategory
 } from '@app/app';
+import { SharedPreferences } from 'sunbird-sdk';
 
 @Component({
   selector: 'page-guest-profile',
@@ -60,7 +60,7 @@ export class GuestProfilePage {
     private popoverCtrl: PopoverController,
     private profileService: ProfileService,
     private events: Events,
-    private preference: SharedPreferences,
+    @Inject('SHARED_PREFERENCES') private preference: SharedPreferences,
     private commonUtilService: CommonUtilService,
     private appGlobalService: AppGlobalService,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,

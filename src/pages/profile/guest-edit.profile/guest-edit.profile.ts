@@ -1,6 +1,6 @@
 import { AlertController } from 'ionic-angular';
 import { TranslateService } from '@ngx-translate/core';
-import { Component } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import {
   App,
   NavController,
@@ -19,7 +19,6 @@ import {
   CategoryRequest,
   ProfileService,
   Profile,
-  SharedPreferences,
   UserSource,
   InteractType,
   InteractSubtype,
@@ -46,6 +45,7 @@ import {
   PreferenceKey,
   FrameworkCategory
 } from '../../../app/app.constant';
+import {SharedPreferences} from 'sunbird-sdk';
 
 @Component({
   selector: 'page-guest-edit.profile',
@@ -113,7 +113,7 @@ export class GuestEditProfilePage {
     private container: ContainerService,
     private app: App,
     private appGlobalService: AppGlobalService,
-    private preferences: SharedPreferences,
+    @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     private commonUtilService: CommonUtilService,
     private alertCtrl: AlertController,
     private framework: FrameworkService

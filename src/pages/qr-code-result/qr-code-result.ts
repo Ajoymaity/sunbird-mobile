@@ -3,7 +3,8 @@ import { FormAndFrameworkUtilService } from './../profile/formandframeworkutil.s
 import {
   Component,
   NgZone,
-  ViewChild
+  ViewChild,
+  Inject
 } from '@angular/core';
 import {
   IonicPage,
@@ -21,7 +22,6 @@ import {
   PageId,
   Profile,
   ProfileService,
-  SharedPreferences,
   TabsPage,
   SuggestedFrameworkRequest,
   FrameworkService
@@ -45,6 +45,7 @@ import { TelemetryGeneratorService } from '../../service/telemetry-generator.ser
 import * as _ from 'lodash';
 import { PopoverController } from 'ionic-angular';
 import { ProfileSettingsPage } from '../profile-settings/profile-settings';
+import { SharedPreferences } from 'sunbird-sdk';
 
 @IonicPage()
 @Component({
@@ -118,7 +119,7 @@ export class QrCodeResultPage {
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     private profileService: ProfileService,
     private events: Events,
-    private preferences: SharedPreferences,
+    @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     private popOverCtrl: PopoverController,
     private commonUtilService: CommonUtilService,
     private framework: FrameworkService

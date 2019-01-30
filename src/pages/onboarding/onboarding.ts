@@ -1,7 +1,8 @@
 import { FormAndFrameworkUtilService } from './../profile/formandframeworkutil.service';
 import {
   Component,
-  ViewChild
+  ViewChild,
+  Inject
 } from '@angular/core';
 import {
   NavController,
@@ -25,7 +26,6 @@ import {
   Environment,
   PageId,
   ImpressionType,
-  SharedPreferences,
   UserSource,
   Profile
 } from 'sunbird';
@@ -43,6 +43,7 @@ import {
 import { LanguageSettingsPage } from '@app/pages/language-settings/language-settings';
 import { AppGlobalService, TelemetryGeneratorService, CommonUtilService } from '@app/service';
 import { CategoriesEditPage } from '../categories-edit/categories-edit';
+import { SharedPreferences } from 'sunbird-sdk';
 
 @Component({
   selector: 'page-onboarding',
@@ -65,7 +66,7 @@ export class OnboardingPage {
     private profileService: ProfileService,
     private authService: AuthService,
     private loadingCtrl: LoadingController,
-    private preferences: SharedPreferences,
+    @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     private platform: Platform,
     private commonUtilService: CommonUtilService,
     private appVersion: AppVersion,
@@ -208,21 +209,21 @@ export class OnboardingPage {
             that.profileService.setCurrentProfile(false, profile)
               .then((response: any) => {
                 this.formAndFrameworkUtilService.updateLoggedInUser(r, profile)
-                .then( (value) => {
-                  that.orgName = r.rootOrg.orgName;
-                  if (value['status']) {
-                    initTabs(that.container, LOGIN_TEACHER_TABS);
+                  .then((value) => {
+                    that.orgName = r.rootOrg.orgName;
+                    if (value['status']) {
+                      initTabs(that.container, LOGIN_TEACHER_TABS);
+                      resolve(r.rootOrg.slug);
+                    } else {
+                      that.navCtrl.setRoot(CategoriesEditPage, { showOnlyMandatoryFields: true, profile: value['profile'] });
+                      reject();
+                    }
+                    // that.orgName = r.rootOrg.orgName;
+                    // resolve(r.rootOrg.slug);
+                  }).catch(() => {
+                    that.orgName = r.rootOrg.orgName;
                     resolve(r.rootOrg.slug);
-                  } else {
-                    that.navCtrl.setRoot(CategoriesEditPage, {showOnlyMandatoryFields: true, profile: value['profile']});
-                    reject();
-                  }
-                  // that.orgName = r.rootOrg.orgName;
-                  // resolve(r.rootOrg.slug);
-                }).catch( () => {
-                  that.orgName = r.rootOrg.orgName;
-                  resolve(r.rootOrg.slug);
-                });
+                  });
               })
               .catch((err: any) => {
                 reject(err);

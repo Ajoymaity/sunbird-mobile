@@ -1,7 +1,8 @@
 import { CommonUtilService } from './../../../service/common-util.service';
 import {
     Component,
-    ViewChild
+    ViewChild,
+    Inject
 } from '@angular/core';
 import {
     NavParams,
@@ -13,7 +14,6 @@ import {
 import { SettingsPage } from '../../settings/settings';
 import {
     OAuthService,
-    SharedPreferences,
     ProfileType,
     Profile,
     UserSource,
@@ -39,6 +39,7 @@ import { ReportsPage } from '../../reports/reports';
 import { TelemetryGeneratorService } from '../../../service/telemetry-generator.service';
 import { AppGlobalService } from '../../../service/app-global.service';
 import { PreferenceKey } from '../../../app/app.constant';
+import { SharedPreferences } from 'sunbird-sdk';
 
 @Component({
     selector: 'menu-overflow',
@@ -57,7 +58,7 @@ export class OverflowMenuComponent {
         private telemetryService: TelemetryService,
         private app: App,
         private profileService: ProfileService,
-        private preferences: SharedPreferences,
+        @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
         private translate: TranslateService,
         private telemetryGeneratorService: TelemetryGeneratorService,
         private appGlobalService: AppGlobalService,
@@ -137,7 +138,7 @@ export class OverflowMenuComponent {
                             this.events.publish(AppGlobalService.USER_INFO_UPDATED);
                             this.profileService.setCurrentProfile(true, profile).then(() => {
                                 this.navigateToAptPage();
-                            }) .catch(() => {
+                            }).catch(() => {
                                 this.navigateToAptPage();
                             });
                         });
