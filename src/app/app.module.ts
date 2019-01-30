@@ -1,47 +1,38 @@
-import { APP_INITIALIZER, ErrorHandler, NgModule, Provider } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
-import { Events, IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
-import { MyApp } from './app.component';
-import { StatusBar } from '@ionic-native/status-bar';
-import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { PluginModules } from './module.service';
-import { EventService, FrameworkModule, TabsPage } from 'sunbird';
-import { AppVersion } from '@ionic-native/app-version';
-import { SocialSharing } from '@ionic-native/social-sharing';
-import { ImageLoader, ImageLoaderConfig, IonicImageLoader } from 'ionic-image-loader';
-import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer';
-import { FileOpener } from '@ionic-native/file-opener';
-import { AppGlobalService } from '@app/service';
-import { CourseUtilService } from '@app/service';
-import { UpgradePopover } from '@app/pages/upgrade';
-import { TelemetryGeneratorService } from '@app/service';
-import { QRScannerResultHandler } from '@app/pages/qrscanner';
-import { CommonUtilService } from '@app/service';
-import { BroadcastComponent } from '@app/component/broadcast/broadcast';
-import { LogoutHandlerService } from '@app/service/handlers/logout-handler.service';
-import { TncUpdateHandlerService } from '@app/service/handlers/tnc-update-handler.service';
-import { SunbirdSdk } from 'sunbird-sdk';
-import { UniqueDeviceID } from '@ionic-native/unique-device-id';
+import {APP_INITIALIZER, ErrorHandler, NgModule, Provider} from '@angular/core';
+import {BrowserModule} from '@angular/platform-browser';
+import {Events, IonicApp, IonicErrorHandler, IonicModule} from 'ionic-angular';
+import {MyApp} from './app.component';
+import {StatusBar} from '@ionic-native/status-bar';
+import {TranslateLoader, TranslateModule, TranslateService} from '@ngx-translate/core';
+import {TranslateHttpLoader} from '@ngx-translate/http-loader';
+import {HttpClient, HttpClientModule} from '@angular/common/http';
+import {PluginModules} from './module.service';
+import {EventService, FrameworkModule, TabsPage} from 'sunbird';
+import {AppVersion} from '@ionic-native/app-version';
+import {SocialSharing} from '@ionic-native/social-sharing';
+import {ImageLoader, ImageLoaderConfig, IonicImageLoader} from 'ionic-image-loader';
+import {FileTransfer, FileTransferObject} from '@ionic-native/file-transfer';
+import {FileOpener} from '@ionic-native/file-opener';
+import {AppGlobalService, CommonUtilService, CourseUtilService, TelemetryGeneratorService} from '@app/service';
+import {UpgradePopover} from '@app/pages/upgrade';
+import {QRScannerResultHandler} from '@app/pages/qrscanner';
+import {BroadcastComponent} from '@app/component/broadcast/broadcast';
+import {LogoutHandlerService} from '@app/service/handlers/logout-handler.service';
+import {TncUpdateHandlerService} from '@app/service/handlers/tnc-update-handler.service';
+import {SunbirdSdk} from 'sunbird-sdk';
+import {UniqueDeviceID} from '@ionic-native/unique-device-id';
 
 export const translateHttpLoaderFactory = (httpClient: HttpClient) => {
   return new TranslateHttpLoader(httpClient, './assets/i18n/', '.json');
 };
 
-export namespace SunbirdSdkInjectionTokens {
-  export const CONTENT_SERVICE = 'CONTENT_SERVICE';
-  export const COURSE_SERVICE = 'COURSE_SERVICE';
-  export const SHARED_PREFERENCES = 'SHARED_PREFERENCES';
-}
-
 export const sunbirdSdkServicesProvidersFactory: () => Provider[] = () => {
   return [{
-    provide: SunbirdSdkInjectionTokens.CONTENT_SERVICE,
-    useValue: SunbirdSdk.instance.contentService
+    provide: 'CONTENT_SERVICE',
+    useFactory: () => SunbirdSdk.instance.contentService
   }, {
-    provide: SunbirdSdkInjectionTokens.COURSE_SERVICE,
-    useValue: SunbirdSdk.instance.courseService
+    provide: 'COURSE_SERVICE',
+    useFactory: () => SunbirdSdk.instance.courseService
   }, {
     provide: 'SHARED_PREFERENCES',
     useFactory: () => SunbirdSdk.instance.sharedPreferences
