@@ -1,5 +1,5 @@
 import { CommonUtilService } from './../../../service/common-util.service';
-import { Component } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { NavController, NavParams } from 'ionic-angular';
 import { AboutAppPage } from '../about-app/about-app';
 import { TermsofservicePage } from '../termsofservice/termsofservice';
@@ -13,11 +13,11 @@ import {
   PageId,
   Environment,
   TelemetryService,
-  SharedPreferences,
   InteractType,
   InteractSubtype
 } from 'sunbird';
 import { generateImpressionTelemetry, generateInteractTelemetry } from '../../../app/telemetryutil';
+import { SharedPreferences } from 'sunbird-sdk';
 
 const KEY_SUNBIRD_CONFIG_FILE_PATH = 'sunbird_config_file_path';
 
@@ -37,7 +37,7 @@ export class AboutUsPage {
     private deviceInfoService: DeviceInfoService,
     private buildParamService: BuildParamService,
     private appVersion: AppVersion,
-    private preference: SharedPreferences,
+    @Inject('SHARED_PREFERENCES') private preference: SharedPreferences,
     private socialSharing: SocialSharing,
     private telemetryService: TelemetryService,
     private commonUtilService: CommonUtilService

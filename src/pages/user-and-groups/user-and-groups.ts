@@ -3,7 +3,8 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   Component,
   NgZone,
-  ViewChild
+  ViewChild,
+  Inject
 } from '@angular/core';
 import {
   IonicPage,
@@ -25,7 +26,6 @@ import {
   ContainerService,
   ProfileType,
   TabsPage,
-  SharedPreferences,
   OAuthService,
   GroupRequest,
   InteractType,
@@ -54,6 +54,7 @@ import { TelemetryGeneratorService } from '../../service/telemetry-generator.ser
 import { Map } from '../../app/telemetryutil';
 import { Content } from 'ionic-angular';
 import { PreferenceKey } from '../../app/app.constant';
+import { SharedPreferences } from 'sunbird-sdk';
 
 @IonicPage()
 @Component({
@@ -83,7 +84,7 @@ export class UserAndGroupsPage {
   selectedUserIndex = -1;
   lastCreatedProfileData: any;
 
-  selectedUsername: string ;
+  selectedUsername: string;
   constructor(
     private navCtrl: NavController,
     private navParams: NavParams,
@@ -98,7 +99,7 @@ export class UserAndGroupsPage {
     private event: Events,
     private appGlobalService: AppGlobalService,
     private container: ContainerService,
-    private preferences: SharedPreferences,
+    @Inject('SHARED_PREFERENCES') private preference: SharedPreferences,
     private app: App,
     private oauth: OAuthService,
     private telemetryGeneratorService: TelemetryGeneratorService,
@@ -649,7 +650,7 @@ export class UserAndGroupsPage {
           this.noUsersPresent = true;
         }
 
-      }) .catch((error) => {
+      }).catch((error) => {
         console.error('Error Occurred=', error);
       });
   }
@@ -697,35 +698,35 @@ export class UserAndGroupsPage {
       .catch(error => {
         console.log('Error : ' + error);
       });
-      this.profileService.setCurrentUser(selectedUser.uid) .then(() => {
-        this.commonUtilService.showToast(this.commonUtilService.translateMessage('SWITCHING_TO', selectedUser.handle),
+    this.profileService.setCurrentUser(selectedUser.uid).then(() => {
+      this.commonUtilService.showToast(this.commonUtilService.translateMessage('SWITCHING_TO', selectedUser.handle),
         undefined, undefined, 1000);
-    setTimeout(() => {
-      if (isBeingPlayed) {
-        this.event.publish('playConfig', this.playConfig);
-        this.navCtrl.pop();
-      }
-      if (selectedUser.profileType === ProfileType.STUDENT) {
-        initTabs(this.container, isBeingPlayed ? GUEST_STUDENT_TABS : GUEST_STUDENT_SWITCH_TABS);
-        this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, ProfileType.STUDENT);
-      } else {
-        initTabs(this.container, isBeingPlayed ? GUEST_TEACHER_TABS : GUEST_TEACHER_SWITCH_TABS);
-        this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, ProfileType.TEACHER);
-      }
-      this.event.publish('refresh:profile');
-      this.event.publish(AppGlobalService.USER_INFO_UPDATED);
-      this.app.getRootNav().setRoot(TabsPage);
-    }, 1000);
-  }) .catch((error) => {
-    console.log('Error ' + error);
-  });
+      setTimeout(() => {
+        if (isBeingPlayed) {
+          this.event.publish('playConfig', this.playConfig);
+          this.navCtrl.pop();
+        }
+        if (selectedUser.profileType === ProfileType.STUDENT) {
+          initTabs(this.container, isBeingPlayed ? GUEST_STUDENT_TABS : GUEST_STUDENT_SWITCH_TABS);
+          this.preference.putString(PreferenceKey.SELECTED_USER_TYPE, ProfileType.STUDENT);
+        } else {
+          initTabs(this.container, isBeingPlayed ? GUEST_TEACHER_TABS : GUEST_TEACHER_SWITCH_TABS);
+          this.preference.putString(PreferenceKey.SELECTED_USER_TYPE, ProfileType.TEACHER);
+        }
+        this.event.publish('refresh:profile');
+        this.event.publish(AppGlobalService.USER_INFO_UPDATED);
+        this.app.getRootNav().setRoot(TabsPage);
+      }, 1000);
+    }).catch((error) => {
+      console.log('Error ' + error);
+    });
   }
-// code which invokes loader
-getLoader(): any {
-  return this.loadingCtrl.create({
-    duration: 30000,
-    spinner: 'crescent'
-  });
-}
+  // code which invokes loader
+  getLoader(): any {
+    return this.loadingCtrl.create({
+      duration: 30000,
+      spinner: 'crescent'
+    });
+  }
 }
 

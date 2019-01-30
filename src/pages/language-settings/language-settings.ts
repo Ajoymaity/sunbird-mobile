@@ -1,6 +1,7 @@
 import {
   Component,
-  NgZone
+  NgZone,
+  Inject
 } from '@angular/core';
 import {
   IonicPage,
@@ -11,13 +12,13 @@ import {
 } from 'ionic-angular';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  SharedPreferences,
   ImpressionType,
   PageId,
   Environment,
   InteractType,
   InteractSubtype
 } from 'sunbird';
+import {SharedPreferences, SunbirdSdk} from 'sunbird-sdk';
 
 import { appLanguages, PreferenceKey, Map } from '@app/app';
 import { CommonUtilService, AppGlobalService, TelemetryGeneratorService } from '@app/service';
@@ -46,7 +47,7 @@ export class LanguageSettingsPage {
     public navCtrl: NavController,
     public navParams: NavParams,
     public translateService: TranslateService,
-    private preferences: SharedPreferences,
+    @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     private events: Events,
     private zone: NgZone,
     private telemetryGeneratorService: TelemetryGeneratorService,
@@ -197,6 +198,7 @@ export class LanguageSettingsPage {
       this.generateLanguageSuccessInteractEvent(this.previousLanguage, this.language);
       if (this.language) {
         this.selectedLanguage = this.languages.find(i => i.code === this.language);
+        console.log(this.preferences);
         this.preferences.putString(PreferenceKey.SELECTED_LANGUAGE_CODE, this.selectedLanguage.code);
         this.preferences.putString(PreferenceKey.SELECTED_LANGUAGE, this.selectedLanguage.label);
         this.translateService.use(this.language);

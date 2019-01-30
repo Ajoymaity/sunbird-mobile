@@ -2,7 +2,8 @@ import { ViewMoreActivityPage } from './../view-more-activity/view-more-activity
 import {
   Component,
   NgZone,
-  OnInit
+  OnInit,
+  Inject
 } from '@angular/core';
 import {
   NavController,
@@ -12,7 +13,6 @@ import {
 import { AppVersion } from '@ionic-native/app-version';
 import { IonicPage } from 'ionic-angular';
 import {
-  SharedPreferences,
   CourseService,
   PageAssembleService,
   PageAssembleCriteria,
@@ -52,6 +52,7 @@ import { updateFilterInSearchQuery } from '../../util/filter.util';
 import { FormAndFrameworkUtilService } from '../profile/formandframeworkutil.service';
 import { CommonUtilService } from '../../service/common-util.service';
 import { TelemetryGeneratorService } from '../../service/telemetry-generator.service';
+import {SharedPreferences} from 'sunbird-sdk';
 
 @IonicPage()
 @Component({
@@ -132,7 +133,7 @@ export class CoursesPage implements OnInit {
     private popCtrl: PopoverController,
     private events: Events,
     private contentService: ContentService,
-    private preference: SharedPreferences,
+    @Inject('SHARED_PREFERENCES') private preference: SharedPreferences,
     private appGlobalService: AppGlobalService,
     private courseUtilService: CourseUtilService,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,

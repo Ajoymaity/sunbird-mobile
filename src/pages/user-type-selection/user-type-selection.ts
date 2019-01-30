@@ -1,7 +1,8 @@
 import {
   Component,
   NgZone,
-  ViewChild
+  ViewChild,
+  Inject
 } from '@angular/core';
 import {
   IonicPage,
@@ -14,7 +15,6 @@ import {
 import { TranslateService } from '@ngx-translate/core';
 import {
   TabsPage,
-  SharedPreferences,
   InteractType,
   InteractSubtype,
   Environment,
@@ -31,6 +31,7 @@ import { AppGlobalService, TelemetryGeneratorService, CommonUtilService } from '
 import { SunbirdQRScanner } from '@app/pages/qrscanner';
 import { ProfileSettingsPage } from '@app/pages/profile-settings/profile-settings';
 import { LanguageSettingsPage } from '@app/pages/language-settings/language-settings';
+import { SharedPreferences } from 'sunbird-sdk';
 
 const selectedCardBorderColor = '#006DE5';
 const borderColor = '#F7F7F7';
@@ -62,7 +63,7 @@ export class UserTypeSelectionPage {
     public navCtrl: NavController,
     public navParams: NavParams,
     private translate: TranslateService,
-    private preference: SharedPreferences,
+    @Inject('SHARED_PREFERENCES') private preference: SharedPreferences,
     private profileService: ProfileService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private container: ContainerService,

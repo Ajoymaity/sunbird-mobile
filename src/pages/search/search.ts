@@ -1,7 +1,8 @@
 import {
   Component,
   NgZone,
-  ViewChild
+  ViewChild,
+  Inject
 } from '@angular/core';
 import {
   IonicPage,
@@ -30,7 +31,6 @@ import {
   PageAssembleCriteria,
   PageAssembleFilter,
   PageAssembleService,
-  SharedPreferences
 } from 'sunbird';
 import { GenieResponse } from '../settings/datasync/genieresponse';
 import { FilterPage } from './filters/filter';
@@ -53,6 +53,7 @@ import { CommonUtilService } from '../../service/common-util.service';
 import { TelemetryGeneratorService } from '../../service/telemetry-generator.service';
 import { QrCodeResultPage } from '../qr-code-result/qr-code-result';
 import { TranslateService } from '@ngx-translate/core';
+import { SharedPreferences } from 'sunbird-sdk';
 @IonicPage()
 @Component({
   selector: 'page-search',
@@ -134,7 +135,7 @@ export class SearchPage {
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     private commonUtilService: CommonUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
-    private preference: SharedPreferences,
+    @Inject('SHARED_PREFERENCES') private preference: SharedPreferences,
     private translate: TranslateService
   ) {
 

@@ -3,7 +3,8 @@ import {
   Component,
   NgZone,
   OnInit,
-  AfterViewInit
+  AfterViewInit,
+  Inject
 } from '@angular/core';
 import {
   PageAssembleService,
@@ -14,7 +15,6 @@ import {
   Environment,
   InteractType,
   InteractSubtype,
-  SharedPreferences,
   ContentFilterCriteria,
   ProfileType,
   PageAssembleFilter,
@@ -48,6 +48,7 @@ import { AppVersion } from '@ionic-native/app-version';
 import { updateFilterInSearchQuery } from '../../util/filter.util';
 import { TelemetryGeneratorService } from '../../service/telemetry-generator.service';
 import { CommonUtilService } from '../../service/common-util.service';
+import {SharedPreferences} from 'sunbird-sdk';
 
 @Component({
   selector: 'page-resources',
@@ -96,7 +97,7 @@ export class ResourcesPage implements OnInit, AfterViewInit {
     private qrScanner: SunbirdQRScanner,
     private popCtrl: PopoverController,
     private events: Events,
-    private preference: SharedPreferences,
+    @Inject('SHARED_PREFERENCES') private preference: SharedPreferences,
     private zone: NgZone,
     private appGlobalService: AppGlobalService,
     private appVersion: AppVersion,

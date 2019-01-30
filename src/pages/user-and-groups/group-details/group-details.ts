@@ -3,7 +3,8 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   Component,
   NgZone,
-  ViewChild
+  ViewChild,
+  Inject
 } from '@angular/core';
 import {
   IonicPage,
@@ -28,7 +29,6 @@ import {
   ProfileType,
   TabsPage,
   ContainerService,
-  SharedPreferences,
   AddUpdateProfilesRequest,
   InteractType,
   InteractSubtype,
@@ -53,6 +53,8 @@ import { ToastController } from 'ionic-angular';
 import { TelemetryGeneratorService } from '../../../service/telemetry-generator.service';
 import { Map } from '../../../app/telemetryutil';
 import { PreferenceKey } from '../../../app/app.constant';
+import { SharedPreferences } from 'sunbird-sdk';
+
 @IonicPage()
 @Component({
   selector: 'page-group-member',
@@ -83,7 +85,7 @@ export class GroupDetailsPage {
     private alertCtrl: AlertController,
     private oauth: OAuthService,
     private container: ContainerService,
-    private preferences: SharedPreferences,
+    @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     private app: App,
     private event: Events,
     private loadingCtrl: LoadingController,
@@ -500,7 +502,7 @@ export class GroupDetailsPage {
     this.groupService.setCurrentGroup(this.group.gid)
       .then(val => {
         console.log('Value : ' + val);
-        this.profileService.setCurrentUser(selectedUser.uid) .then((success) => {
+        this.profileService.setCurrentUser(selectedUser.uid).then((success) => {
           if (isBeingPlayed) {
             this.event.publish('playConfig', this.playConfig);
             this.navCtrl.popTo(this.navCtrl.getByIndex(this.navCtrl.length() - 2));
@@ -525,7 +527,7 @@ export class GroupDetailsPage {
           });
           toast.present();
 
-        }) .catch((error) => {
+        }).catch((error) => {
           console.log('Error ' + error);
         });
       }).catch(error => {

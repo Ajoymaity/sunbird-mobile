@@ -1,6 +1,6 @@
 import { AppGlobalService } from '@app/service';
 import { CommonUtilService } from './../../service/common-util.service';
-import { Component } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { NavController, DateTime } from 'ionic-angular';
 import { DatasyncPage } from './datasync/datasync';
 import { LanguageSettingsPage } from '../language-settings/language-settings';
@@ -9,7 +9,6 @@ import { SocialSharing } from '@ionic-native/social-sharing';
 import { TranslateService } from '@ngx-translate/core';
 import { AppVersion } from '@ionic-native/app-version';
 import {
-  SharedPreferences,
   InteractType,
   InteractSubtype,
   ShareUtil,
@@ -22,6 +21,7 @@ import {
 } from 'sunbird';
 import { generateInteractTelemetry, generateImpressionTelemetry } from '../../app/telemetryutil';
 import { PreferenceKey } from '../../app/app.constant';
+import { SharedPreferences } from 'sunbird-sdk';
 
 const KEY_SUNBIRD_CONFIG_FILE_PATH = 'sunbird_config_file_path';
 const SUBJECT_NAME = 'Details:';
@@ -44,7 +44,7 @@ export class SettingsPage {
     private socialSharing: SocialSharing,
     private translate: TranslateService,
     private deviceInfoService: DeviceInfoService,
-    private preference: SharedPreferences,
+    @Inject('SHARED_PREFERENCES') private preference: SharedPreferences,
     private telemetryService: TelemetryService,
     private shareUtil: ShareUtil,
     private commonUtilService: CommonUtilService,

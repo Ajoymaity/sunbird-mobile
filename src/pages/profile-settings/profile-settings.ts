@@ -23,7 +23,8 @@ import {
 } from 'sunbird';
 import {
   Component,
-  ViewChild
+  ViewChild,
+  Inject
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import {
@@ -37,7 +38,6 @@ import {
 import { FormAndFrameworkUtilService } from '../profile/formandframeworkutil.service';
 import {
   CategoryRequest,
-  SharedPreferences,
   Profile,
   Environment
 } from 'sunbird';
@@ -54,6 +54,7 @@ import * as _ from 'lodash';
 import { TelemetryGeneratorService } from '../../service/telemetry-generator.service';
 import { SunbirdQRScanner } from '../qrscanner/sunbirdqrscanner.service';
 import { CommonUtilService } from '../../service/common-util.service';
+import {SharedPreferences} from 'sunbird-sdk';
 
 @IonicPage()
 @Component({
@@ -109,7 +110,7 @@ export class ProfileSettingsPage {
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     private translate: TranslateService,
     private loadingCtrl: LoadingController,
-    private preference: SharedPreferences,
+    @Inject('SHARED_PREFERENCES') private preference: SharedPreferences,
     private profileService: ProfileService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private appGlobalService: AppGlobalService,

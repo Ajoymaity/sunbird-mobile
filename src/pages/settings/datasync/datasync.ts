@@ -1,10 +1,9 @@
 import { CommonUtilService } from './../../../service/common-util.service';
-import { Component, NgZone } from '@angular/core';
+import { Component, NgZone, Inject } from '@angular/core';
 import { NavController, NavParams } from 'ionic-angular';
 import {
   TelemetryService,
   SyncStat,
-  SharedPreferences,
   PageId,
   Environment,
   ImpressionType,
@@ -18,6 +17,7 @@ import { DataSyncType } from './datasynctype.enum';
 import { TranslateService } from '@ngx-translate/core';
 import { SocialSharing } from '@ionic-native/social-sharing';
 import { generateImpressionTelemetry, generateInteractTelemetry } from '../../../app/telemetryutil';
+import {SharedPreferences} from 'sunbird-sdk';
 
 const KEY_DATA_SYNC_TYPE = 'sync_config';
 const KEY_DATA_SYNC_TIME = 'data_sync_time';
@@ -42,7 +42,7 @@ export class DatasyncPage {
     public navCtrl: NavController,
     public navParams: NavParams,
     private telemetryService: TelemetryService,
-    private preference: SharedPreferences,
+    @Inject('SHARED_PREFERENCES') private preference: SharedPreferences,
     private translate: TranslateService,
     private shareUtil: ShareUtil,
     private social: SocialSharing,
