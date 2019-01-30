@@ -32,6 +32,7 @@ export const translateHttpLoaderFactory = (httpClient: HttpClient) => {
 export namespace SunbirdSdkInjectionTokens {
   export const CONTENT_SERVICE = 'CONTENT_SERVICE';
   export const COURSE_SERVICE = 'COURSE_SERVICE';
+  export const SHARED_PREFERENCES = 'SHARED_PREFERENCES';
 }
 
 export const sunbirdSdkServicesProvidersFactory: () => Provider[] = () => {
@@ -41,6 +42,9 @@ export const sunbirdSdkServicesProvidersFactory: () => Provider[] = () => {
   }, {
     provide: SunbirdSdkInjectionTokens.COURSE_SERVICE,
     useValue: SunbirdSdk.instance.courseService
+  }, {
+    provide: 'SHARED_PREFERENCES',
+    useFactory: () => SunbirdSdk.instance.sharedPreferences
   }];
 };
 
@@ -48,7 +52,6 @@ export const sunbirdSdkFactory: (uniqueDeviceID: UniqueDeviceID) => () => Promis
   (uniqueDeviceID: UniqueDeviceID) => {
     return async () => {
       const deviceId = await uniqueDeviceID.get();
-
         SunbirdSdk.instance.init({
           apiConfig: {
             baseUrl: 'https://dev.sunbirded.org',
@@ -69,10 +72,8 @@ export const sunbirdSdkFactory: (uniqueDeviceID: UniqueDeviceID) => () => Promis
               timeToLive: 2000
             }
           },
-          dbContext: {
-            getDBName: () => 'GenieServices.db',
-            getDBVersion: () => 16,
-            getAppMigrationList: () => []
+          dbConfig: {
+            dbName: 'GenieServices.db'
           },
           contentServiceConfig: {
             apiPath: ''
