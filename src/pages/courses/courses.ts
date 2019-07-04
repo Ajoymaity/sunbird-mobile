@@ -546,7 +546,7 @@ export class CoursesPage implements OnInit, AfterViewInit {
     const that = this;
 
     this.pageFilterCallBack = {
-      applyFilter(filter, appliedFilter) {
+      applyFilter(filter, appliedFilter, check) {
         that.ngZone.run(() => {
           const criteria: PageAssembleCriteria = {
             name: PageName.COURSE,
@@ -585,7 +585,9 @@ export class CoursesPage implements OnInit, AfterViewInit {
             that.filterIcon = './assets/imgs/ic_action_filter.png';
           }
 
-          that.getPopularAndLatestCourses(false, criteria);
+          if (check) {
+            that.getPopularAndLatestCourses(false, criteria);
+          }
         });
       }
     };
