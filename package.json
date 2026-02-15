@@ -80,7 +80,7 @@
     "lodash": "^4.17.5",
     "ng2-expansion-panels": "0.0.6",
     "ngx-chips": "1.8.2",
-    "node-sass": "^4.7.2",
+    "node-sass": "^9.0.0",
     "rxjs": "5.5.2",
     "sw-toolbox": "3.6.0",
     "zone.js": "0.8.18"
